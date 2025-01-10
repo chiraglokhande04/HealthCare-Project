@@ -18,18 +18,20 @@ const Landing = () => {
         <p className="text-xl mb-12">Your Health, Our Priority</p>
         
         <div className="flex justify-center gap-8">
-          <Link to="/login" onClick={()=>loginWithRedirect()}>
-            <button className="bg-blue-600 text-white text-3xl px-8 py-4 rounded-lg hover:bg-blue-700 transition duration-300 transform hover:scale-105">
-              Login
-            </button>
-          </Link>
-          
-          <Link to="/register" onClick={()=>loginWithRedirect()}>
-            <button className="bg-green-600 text-white text-3xl px-8 py-4 rounded-lg hover:bg-green-700 transition duration-300 transform hover:scale-105">
-              Register
-            </button>
-          </Link>
-        </div>
+  <button
+    onClick={() => loginWithRedirect()}
+    className="bg-blue-600 text-white text-3xl px-8 py-4 rounded-lg hover:bg-blue-700 transition duration-300 transform hover:scale-105"
+  >
+    Login
+  </button>
+  <button
+    onClick={() => loginWithRedirect()}
+    className="bg-green-600 text-white text-3xl px-8 py-4 rounded-lg hover:bg-green-700 transition duration-300 transform hover:scale-105"
+  >
+    Register
+  </button>
+</div>
+
       </div>
     </div>
   )
