@@ -1,21 +1,27 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const FindDoctorPage = () => {
   // State to manage button click
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   // Function to handle button click
   const handleGetStartedClick = () => {
-    setIsLoading(true);
+    setIsLoading(true)
+        
+    
+    
     // Optionally, you can add a delay here to simulate a loading process
     setTimeout(() => {
       // Here you can handle what happens after loading completes
-      setIsLoading(false); // Hide loader after some action is complete
-    }, 3000); // 3 seconds delay
+      setIsLoading(false); 
+      navigate("/profile")// Hide loader after some action is complete
+    }, 1000); // 3 seconds delay
   };
 
   return (
-    <div className="bg-blue-500 h-screen flex flex-col items-center justify-center">
+    <div className="bg-blue-500 h-screen flex flex-col items-center justify-center rounded-md">
       <div className="w-full  h-full bg-white flex flex-col items-center justify-center rounded-xl shadow-md ">
         {/* Illustration */}
         <div className="flex justify-center mb-6">

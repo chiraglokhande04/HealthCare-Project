@@ -1,53 +1,90 @@
 import React, { useState } from "react";
 import BottomBar from "../components/BottomBar";
-import 'regenerator-runtime/runtime';  // Ensure regenerator-runtime is imported
+import 'regenerator-runtime/runtime'; // Ensure regenerator-runtime is imported
 import { FaMicrophone } from "react-icons/fa6";
-
-// Import react-speech-recognition
+import axios from "axios"; // Import axios
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 
 const ChatPage = () => {
-  // State for user messages and chatbot responses
   const [messages, setMessages] = useState([]);
   const [textInput, setTextInput] = useState("");
+  const [audioUrl, setAudioUrl] = useState("");
 
-  // Speech Recognition hooks (if using react-speech-recognition)
   const { transcript, resetTranscript, listening, browserSupportsSpeechRecognition } = useSpeechRecognition();
 
-  // Handler for sending messages
-  const handleSendMessage = () => {
+  // Backend URL
+  const BACKEND_URL = "http://127.0.0.1:4000";
+
+  // Function to send a message to the backend and receive a response (text + audio)
+  const sendMessageToBackend = async (message) => {
+    try {
+      const response = await axios.post(`${BACKEND_URL}/chat`, { user_input: message });
+
+      return {
+        text: response.data.text_response, // Text response
+        audio: `${BACKEND_URL}/audio-response?text=${encodeURIComponent(response.data.text_response)}` // Audio URL
+      };
+    } catch (error) {
+      console.error("Error communicating with backend:", error);
+      return { text: "Error: Unable to connect to the backend.", audio: "" };
+    }
+  };
+
+  // Handler for sending text messages
+  const handleSendMessage = async () => {
     if (textInput) {
-      setMessages([...messages, { user: textInput, bot: "Bot: I'm here to help!" }]);
-      setTextInput("");  // Clear the input field after sending
+      const userMessage = textInput;
+      setMessages((prev) => [...prev, { user: userMessage, bot: "Typing..." }]);
+
+      const botResponse = await sendMessageToBackend(userMessage);
+      if (botResponse.text.startsWith("Error:")) {
+        setMessages((prev) => [
+          ...prev.slice(0, -1),
+          { user: userMessage, bot: "Sorry, something went wrong. Please try again later." },
+        ]);
+      } else {
+        setMessages((prev) => [
+          ...prev.slice(0, -1),
+          { user: userMessage, bot: botResponse.text },
+        ]);
+        setAudioUrl(botResponse.audio);
+      }
+      setTextInput("");
     }
   };
 
   // Handler for sending speech input
-  const handleVoiceMessage = () => {
+  const handleVoiceMessage = async () => {
     if (transcript) {
-      setMessages([...messages, { user: transcript, bot: "Bot: I'm here to help!" }]);
-      resetTranscript();  // Reset transcript after sending the voice input
+      const userMessage = transcript;
+      setMessages((prev) => [...prev, { user: userMessage, bot: "Typing..." }]);
+
+      const botResponse = await sendMessageToBackend(userMessage);
+      setMessages((prev) => [
+        ...prev.slice(0, -1),
+        { user: userMessage, bot: botResponse.text },
+      ]);
+      setAudioUrl(botResponse.audio);
+      resetTranscript();
     }
   };
 
-  // Ensure that Speech Recognition is supported in the browser
   if (!browserSupportsSpeechRecognition) {
     return <p>Browser doesn't support speech recognition.</p>;
   }
 
-  // Handle automatic message sending after speech recognition stops
+  // Automatically handle voice message when speech recognition stops
   if (transcript && !listening) {
     handleVoiceMessage();
   }
 
   return (
-    <div className="flex flex-col items-center bg-blue-50 h-full py-8">
+    <div className="flex flex-col items-center bg-blue-50 h-full py-8 rounded-lg">
       <h1 className="text-2xl font-semibold text-gray-700">Chat</h1>
       <p className="text-gray-500 mt-4">Chat with our bot!</p>
 
       {/* Chat Container */}
       <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-lg mt-6 flex flex-col space-y-4">
-        {/* Chat Messages */}
         <div className="flex-1 overflow-y-scroll mb-4">
           {messages.map((message, index) => (
             <div key={index} className={`my-2 p-2 rounded-lg ${message.user ? 'bg-blue-100' : 'bg-gray-100'}`}>
@@ -57,15 +94,14 @@ const ChatPage = () => {
           ))}
         </div>
 
-        {/* Text Input and Send Button */}
+        {/* Text Input and Buttons */}
         <div className="flex items-center space-x-4">
           <input
             type="text"
-            value={listening ? transcript : textInput}  // Use speech-to-text transcript if speaking
-            onChange={(e) => setTextInput(e.target.value)}  // Manually input text
+            value={listening ? transcript : textInput}
+            onChange={(e) => setTextInput(e.target.value)}
             className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none"
             placeholder="Type a message..."
-            onFocus={() => { if (!listening) { setTextInput(""); } }}  // Clear on focus if not listening
           />
           <button
             onClick={handleSendMessage}
@@ -73,8 +109,6 @@ const ChatPage = () => {
           >
             Send
           </button>
-          
-          {/* Voice Input (Mic) Button */}
           <button
             onClick={() => SpeechRecognition.startListening()}
             className="p-3 bg-green-600 text-white rounded-full"
@@ -84,7 +118,16 @@ const ChatPage = () => {
         </div>
       </div>
 
-      {/* Chatbot Input Section */}
+      {/* Audio Player for Bot Response */}
+      {audioUrl && (
+        <div className="mt-4">
+          <audio controls>
+            <source src={audioUrl} type="audio/mp3" />
+            Your browser does not support the audio element.
+          </audio>
+        </div>
+      )}
+
       <BottomBar />
     </div>
   );

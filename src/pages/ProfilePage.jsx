@@ -3,7 +3,7 @@ import BottomBar from "../components/BottomBar";
 
 const ProfilePage = () => {
   return (
-    <div className="overflow-y-hidden flex flex-col items-center bg-blue-50 min-h-screen pb-20"> {/* Adjusted to full screen height */}
+    <div className="overflow-y-hidden flex flex-col items-center bg-blue-50 min-h-screen pb-20 rounded-lg"> {/* Adjusted to full screen height */}
       {/* Profile Section */}
       <div className="flex flex-col items-center mt-8">
         <img

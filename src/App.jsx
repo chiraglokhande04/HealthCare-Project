@@ -26,12 +26,7 @@ const App = () => {
         </div>
       </div>
 
-      {/* Hidden on Desktop */}
-      <div className="hidden md:flex items-center justify-center h-screen">
-        <p className="text-gray-500 text-lg">
-          This application is available for mobile devices only.
-        </p>
-      </div>
+
     </Router>
   );
 };
