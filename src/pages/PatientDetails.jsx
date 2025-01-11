@@ -4,38 +4,7 @@ import { useLocation, Link, useNavigate } from 'react-router-dom';
 const PatientDetails = () => {
  // const { state: patient } = useLocation();
   const navigate = useNavigate();
-  const patient = {
-    name: "John Doe",
-    age: 45,
-    bloodGroup: "B+",
-    dob: "1980-01-01",
-    contact: "123-456-7890",
-    seriousIssues: "Diabetes",
-    previousMedications: [
-      {
-        name: "Metformin",
-        disease: "Type 2 Diabetes",
-        date: "2024-12-01",
-        treatmentDetails: "500mg daily after meals for 6 months.",
-        result: "Blood sugar levels improved significantly.",
-      },
-      {
-        name: "Atorvastatin",
-        disease: "High Cholesterol",
-        date: "2024-11-01",
-        treatmentDetails: "20mg daily before bedtime for 3 months.",
-        result: "Cholesterol levels reduced to normal range.",
-      },
-      {
-        name: "Atorvastatin",
-        disease: "High Cholesterol",
-        date: "2024-11-01",
-        treatmentDetails: "20mg daily before bedtime for 3 months.",
-        result: "Cholesterol levels reduced to normal range.",
-      },
-    ],
-  };
-  
+
 
   if (!patient) {
     return <p className="text-center text-red-500 mt-10">No patient data available.</p>;

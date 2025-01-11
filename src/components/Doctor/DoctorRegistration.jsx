@@ -1,63 +1,43 @@
 import React, { useState } from "react";
 import InputField from "../InputField";
-import SelectField from "../SelectField";
 
+import { useMutation } from "@tanstack/react-query";
+import { createDoctor } from "../../services/doctor";
+import { useNavigate } from "react-router-dom";
 const DoctorRegistration = () => {
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
-    username: "",
     password: "",
     name: "",
     email: "",
-    phone: "",
+    phoneNumber: "",
     specialization: "",
-    experience: "",
-    qualifications: "",
-    consultationHours: "",
-    modeOfConsultation: "",
-    fees: "",
-    bankDetails: "",
+    consultationFee: "",
+    yearsOfExperience: "",
+    isActive: false
   });
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
+  const mutation = useMutation({
+    mutationFn:createDoctor,
+    onSuccess:()=>{navigate('/')},
+    onError:(error)=>{console.log(error)}
+  })
+ 
+  
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Form Submitted", formData);
-    // Add API call or further processing here
+    mutation.mutate(formData)
   };
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-black bg-cover bg-center">
-      <div className="bg-white  border-black border-2  rounded-xl shadow-2xl p-8 max-w-3xl w-full">
+      <div className="bg-white border-black border-2 rounded-xl shadow-2xl p-8 max-w-3xl w-full">
         <h2 className="text-3xl font-semibold text-center text-blue-600 mb-8">Doctor Registration</h2>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Account Information Section */}
-          <section>
-            <h3 className="text-xl font-semibold text-gray-800 mb-4">Account Information</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <InputField
-                label="Username"
-                name="username"
-                value={formData.username}
-                onChange={handleChange}
-                placeholder="Enter your username"
-                className="input-field"
-              />
-              <InputField
-                label="Password"
-                name="password"
-                type="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Enter your password"
-                className="input-field"
-              />
-            </div>
-          </section>
-
           {/* Basic Information Section */}
           <section>
             <h3 className="text-xl font-semibold text-gray-800 mb-4">Basic Information</h3>
@@ -81,9 +61,9 @@ const DoctorRegistration = () => {
               />
               <InputField
                 label="Phone Number"
-                name="phone"
+                name="phoneNumber"
                 type="tel"
-                value={formData.phone}
+                value={formData.phoneNumber}
                 onChange={handleChange}
                 placeholder="Enter your phone number"
                 className="input-field"
@@ -105,42 +85,11 @@ const DoctorRegistration = () => {
               />
               <InputField
                 label="Years of Experience"
-                name="experience"
+                name="yearsOfExperience"
                 type="number"
-                value={formData.experience}
+                value={formData.yearsOfExperience}
                 onChange={handleChange}
                 placeholder="e.g., 5"
-                className="input-field"
-              />
-              <InputField
-                label="Qualifications"
-                name="qualifications"
-                value={formData.qualifications}
-                onChange={handleChange}
-                placeholder="e.g., MBBS, MD"
-                className="input-field"
-              />
-            </div>
-          </section>
-
-          {/* Availability Section */}
-          <section>
-            <h3 className="text-xl font-semibold text-gray-800 mb-4">Availability</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <InputField
-                label="Consultation Hours"
-                name="consultationHours"
-                value={formData.consultationHours}
-                onChange={handleChange}
-                placeholder="e.g., 10:00 AM - 5:00 PM"
-                className="input-field"
-              />
-              <SelectField
-                label="Mode of Consultation"
-                name="modeOfConsultation"
-                options={["In-person", "Online", "Both"]}
-                value={formData.modeOfConsultation}
-                onChange={handleChange}
                 className="input-field"
               />
             </div>
@@ -152,19 +101,27 @@ const DoctorRegistration = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <InputField
                 label="Consultation Fees (₹)"
-                name="fees"
+                name="consultationFee"
                 type="number"
-                value={formData.fees}
+                value={formData.consultationFee}
                 onChange={handleChange}
                 placeholder="e.g., 500"
                 className="input-field"
               />
+            </div>
+          </section>
+
+          {/* Account Information Section */}
+          <section>
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">Account Information</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <InputField
-                label="Bank Account/UPI Details (Optional)"
-                name="bankDetails"
-                value={formData.bankDetails}
+                label="Password"
+                name="password"
+                type="password"
+                value={formData.password}
                 onChange={handleChange}
-                placeholder="e.g., UPI ID or Account Number"
+                placeholder="Enter your password"
                 className="input-field"
               />
             </div>
